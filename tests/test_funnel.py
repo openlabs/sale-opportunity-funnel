@@ -31,6 +31,7 @@ class FunnelTestCase(unittest.TestCase):
     def setUp(self):
         trytond.tests.test_tryton.install_module('sale_opportunity_funnel')
         self.funnel = POOL.get('sale.opportunity.funnel')
+        self.stage = POOL.get('sale.opportunity.funnel.stage')
 
     def test0005views(self):
         '''
@@ -71,6 +72,77 @@ class FunnelTestCase(unittest.TestCase):
                 Exception, self.funnel.create,
                 {
                     'name': 'Funnel 1',
+                }
+            )
+
+    def test_0030_create_funnel_stage(self):
+        """
+        Tests creation of funnel stage
+        """
+        with Transaction().start(DB_NAME, USER, context=CONTEXT):
+            funnel1 = self.funnel.create(
+                {
+                    'name': 'Funnel 1',
+                }
+            )
+            stage1 = self.stage.create(
+                {
+                    'name': 'Stage 1',
+                    'funnel': funnel1.id,
+                }
+            )
+            self.assert_(stage1.id)
+            self.assertEqual(stage1.sequence, 10)
+
+    def test_0040funnel_stage_constraint(self):
+        """
+        Tests that funnel stage cannot be created with duplicate name
+        """
+        with Transaction().start(DB_NAME, USER, context=CONTEXT):
+            funnel1 = self.funnel.create(
+                {
+                    'name': 'Funnel 1',
+                }
+            )
+            self.stage.create(
+                {
+                    'name': 'Stage 1',
+                    'sequence': 10,
+                    'funnel': funnel1.id,
+                }
+            )
+            self.assertRaises(
+                Exception, self.stage.create,
+                {
+                    'name': 'Stage 1',
+                    'sequence': 11,
+                    'funnel': funnel1.id,
+                }
+            )
+
+    def test_0050funnel_stage_sequence_constraint(self):
+        """
+        Tests that two stages cannot have same sequence in a funnel
+        """
+        with Transaction().start(DB_NAME, USER, context=CONTEXT):
+            funnel1 = self.funnel.create(
+                {
+                    'name': 'Funnel 1',
+                }
+            )
+            self.stage.create(
+                {
+                    'name': 'Stage 1',
+                    'sequence': 10,
+                    'funnel': funnel1.id,
+                }
+            )
+            self.assertRaises(
+                Exception, self.stage.create,
+                {
+                    'name': 'Stage 1',
+                    'sequence': 10,
+                    'funnel': funnel1.id,
                 }
             )
 

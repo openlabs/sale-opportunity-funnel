@@ -12,6 +12,11 @@
                     <newline />
                     <label name="sequence" />
                     <field name="sequence" />
+                    <notebook>
+                        <page name="stages">
+                            <field name="stages"/>
+                        </page>
+                    </notebook>
                     </form>
                 ]]>
             </field>
@@ -45,5 +50,53 @@
         </record>
         <menuitem parent="sale.menu_configuration" sequence="1"
             id="menu_funnel_form" icon="tryton-list" action="act_funnel_form"/>
+        <record model="ir.ui.view" id="funnel_stage_view_form">
+            <field name="model">sale.opportunity.funnel.stage</field>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+                <![CDATA[
+                    <form string="Funnel Stage">
+                        <label name="name"/>
+                        <field name="name"/>
+                        <newline />
+                        <label name="sequence" />
+                        <field name="sequence" />
+                        <label name="funnel" />
+                        <field name="funnel" />
+                    </form>
+                ]]>
+            </field>
+        </record>
+        <record model="ir.ui.view" id="funnel_stage_view_tree">
+            <field name="model">sale.opportunity.funnel.stage</field>
+            <field name="type">tree</field>
+            <field name="arch" type="xml">
+                <![CDATA[
+                    <tree string="Funnel Stage">
+                        <field name="name"/>
+                        <field name="sequence"/>
+                        <field name="funnel"/>
+                    </tree>
+                ]]>
+            </field>
+        </record>
+        <record model="ir.action.act_window" id="act_funnel_stage_form">
+            <field name="name">Sale Opportunity Funnel Stage</field>
+            <field name="res_model">sale.opportunity.funnel.stage</field>
+        </record>
+        <record model="ir.action.act_window.view" id="act_funnel__stage_view1">
+            <field name="sequence" eval="10"/>
+            <field name="view" ref="funnel_stage_view_tree"/>
+            <field name="act_window" ref="act_funnel_stage_form"/>
+        </record>
+        <record model="ir.action.act_window.view" 
+            id="act_funnel_stage_view2">
+            <field name="sequence" eval="20"/>
+            <field name="view" ref="funnel_stage_view_form"/>
+            <field name="act_window" ref="act_funnel_stage_form"/>
+        </record>
+        <menuitem parent="sale.menu_configuration" sequence="1"
+            id="menu_funnel_stage_form" icon="tryton-list" 
+            action="act_funnel_stage_form"/>
     </data>
 </tryton>
