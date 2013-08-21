@@ -1,0 +1,49 @@
+<?xml version="1.0"?>
+<tryton>
+    <data>
+        <record model="ir.ui.view" id="funnel_view_form">
+            <field name="model">sale.opportunity.funnel</field>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+                <![CDATA[
+                    <form string="Funnel">
+                    <label name="name"/>
+                    <field name="name"/>
+                    <newline />
+                    <label name="sequence" />
+                    <field name="sequence" />
+                    </form>
+                ]]>
+            </field>
+        </record>
+        <record model="ir.ui.view" id="funnel_view_tree">
+            <field name="model">sale.opportunity.funnel</field>
+            <field name="type">tree</field>
+            <field name="arch" type="xml">
+                <![CDATA[
+                    <tree string="Funnel">
+                    <field name="name"/>
+                    <field name="sequence"/>
+                    </tree>
+                ]]>
+            </field>
+        </record>
+        <record model="ir.action.act_window" id="act_funnel_form">
+            <field name="name">Sale Opportunity Funnel</field>
+            <field name="res_model">sale.opportunity.funnel</field>
+        </record>
+        <record model="ir.action.act_window.view" id="act_funnel_view1">
+            <field name="sequence" eval="10"/>
+            <field name="view" ref="funnel_view_tree"/>
+            <field name="act_window" ref="act_funnel_form"/>
+        </record>
+        <record model="ir.action.act_window.view" 
+            id="act_funnel_view2">
+            <field name="sequence" eval="20"/>
+            <field name="view" ref="funnel_view_form"/>
+            <field name="act_window" ref="act_funnel_form"/>
+        </record>
+        <menuitem parent="sale.menu_configuration" sequence="1"
+            id="menu_funnel_form" icon="tryton-list" action="act_funnel_form"/>
+    </data>
+</tryton>
