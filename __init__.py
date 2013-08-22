@@ -6,7 +6,7 @@
     :license: BSD, see LICENSE for more details.
 """
 from trytond.pool import Pool
-from funnel import Funnel, FunnelStage
+from funnel import Funnel, FunnelStage, SaleOpportunity
 
 
 def register():
@@ -16,5 +16,6 @@ def register():
     Pool.register(
         Funnel,
         FunnelStage,
+        SaleOpportunity,
         module='sale_opportunity_funnel', type_='model',
     )

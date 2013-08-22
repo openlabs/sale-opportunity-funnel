@@ -32,6 +32,12 @@ class FunnelTestCase(unittest.TestCase):
         trytond.tests.test_tryton.install_module('sale_opportunity_funnel')
         self.funnel = POOL.get('sale.opportunity.funnel')
         self.stage = POOL.get('sale.opportunity.funnel.stage')
+        self.sale_opportunity = POOL.get('sale.opportunity')
+        self.employee = POOL.get('company.employee')
+        self.company = POOL.get('company.company')
+        self.party = POOL.get('party.party')
+        self.currency = POOL.get('currency.currency')
+        self.user = POOL.get('res.user')
 
     def test0005views(self):
         '''
@@ -145,6 +151,58 @@ class FunnelTestCase(unittest.TestCase):
                     'funnel': funnel1.id,
                 }
             )
+
+    def test_0060funnel_integration(self):
+        """
+        Test creation of sale opportunity with funnel and stages
+        """
+        with Transaction().start(DB_NAME, USER, context=CONTEXT):
+            currency = self.currency.create({
+                'name': 'US Dollar',
+                'code': 'USD',
+                'symbol': '$',
+            })
+            company = self.company.create({
+                'name': 'Openlabs',
+                'currency': currency.id,
+            })
+            party1 = self.party.create({
+                'name': 'Non registered user',
+            })
+            self.user.write([self.user(USER)], {
+                'company': company.id,
+                'main_company': company.id,
+            })
+            employee1 = self.employee.create({
+                'company': company.id,
+                'party': party1.id,
+            })
+
+            funnel1 = self.funnel.create(
+                {
+                    'name': 'Funnel 1',
+                }
+            )
+            stage1 = self.stage.create(
+                {
+                    'name': 'Stage 1',
+                    'sequence': 10,
+                    'funnel': funnel1.id,
+                }
+            )
+            with Transaction().set_context({
+                'company': company.id,
+                'employee': employee1.id,
+            }):
+                sale_opportunity1 = self.sale_opportunity.create(
+                    {
+                        'party': party1.id,
+                        'funnel': funnel1.id,
+                        'stage': stage1.id,
+                        'description': 'dsf',
+                    }
+                )
+                self.assert_(sale_opportunity1.id)
 
 
 def suite():

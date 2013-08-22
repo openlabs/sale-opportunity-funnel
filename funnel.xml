@@ -98,5 +98,41 @@
         <menuitem parent="sale.menu_configuration" sequence="1"
             id="menu_funnel_stage_form" icon="tryton-list" 
             action="act_funnel_stage_form"/>
+        <record model="ir.ui.view" id="funnel_integration_view_form">
+            <field name="model">sale.opportunity</field>
+            <field name="type">form</field>
+            <field name="inherit" ref="sale_opportunity.opportunity_view_form"/>
+            <field name="arch" type="xml">
+                <![CDATA[
+                <data>
+                    <xpath
+                        expr="/form/field[@name='probability']"
+                        position="after">
+                        <label name="funnel"/>
+                        <field name="funnel"/>
+                        <label name="stage"/>
+                        <field name="stage"/>
+                    </xpath>
+                </data>
+                ]]>
+            </field>
+        </record>
+        <record model="ir.ui.view" id="funnel_integration_view_tree">
+            <field name="model">sale.opportunity</field>
+            <field name="type">tree</field>
+            <field name="inherit" ref="sale_opportunity.opportunity_view_tree"/>
+            <field name="arch" type="xml">
+                <![CDATA[
+                <data>
+                    <xpath
+                        expr="/tree/field[@name='probability']"
+                        position="after">
+                        <field name="funnel"/>
+                        <field name="stage"/>
+                    </xpath>
+                </data>
+                ]]>
+            </field>
+        </record>
     </data>
 </tryton>
