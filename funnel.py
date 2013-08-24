@@ -8,9 +8,12 @@
     :license: BSD, see LICENSE for more details.
 """
 from trytond.model import ModelView, ModelSQL, fields
+from trytond.pool import PoolMeta
+from trytond.pyson import Eval
 
 
-__all__ = ['Funnel', ]
+__all__ = ['Funnel', 'FunnelStage', 'SaleOpportunity', ]
+__metaclass__ = PoolMeta
 
 
 class Funnel(ModelSQL, ModelView):
@@ -71,3 +74,24 @@ class FunnelStage(ModelSQL, ModelView):
         Default value of sequence
         """
         return 10
+
+
+class SaleOpportunity:
+    """
+    Sale Opportunity
+    """
+    __name__ = 'sale.opportunity'
+
+    funnel = fields.Many2One(
+        'sale.opportunity.funnel', 'Funnel', required=True, select=True,
+    )
+    stage = fields.Many2One(
+        'sale.opportunity.funnel.stage', 'Stage', required=True,
+        on_change_with=['funnel'],
+        domain=[('funnel', '=', Eval('funnel'))], depends=['funnel'],
+        select=True,
+    )
+
+    def on_change_with_stage(self):
+        if self.funnel and self.funnel.stages:
+            return self.funnel.stages[0].id
